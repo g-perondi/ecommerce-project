@@ -1,4 +1,4 @@
-package com.winet.ecommerce.service.impl;
+package com.winet.ecommerce.service.implementation;
 
 import com.winet.ecommerce.exception.custom.ApiException;
 import com.winet.ecommerce.exception.custom.ResourceNotFoundException;

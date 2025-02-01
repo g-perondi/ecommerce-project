@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @UtilityClass
-public class PagingAndSortingUtils {
+public final class PagingAndSortingUtils {
 
 	public static final String PAGE_NUMBER = "0";
 	public static final String PAGE_SIZE = "20";
