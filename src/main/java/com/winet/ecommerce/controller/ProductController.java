@@ -66,7 +66,7 @@ public class ProductController {
 		return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
 	}
 
-	@GetMapping("/public/products/search")
+	@GetMapping(value = "/public/products/search")
 	public ResponseEntity<ProductResponse> getAllProductsByKeyword(
 			@RequestParam(name = "keyword") String keyword,
 			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,

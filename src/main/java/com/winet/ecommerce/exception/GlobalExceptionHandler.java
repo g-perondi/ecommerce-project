@@ -3,7 +3,6 @@ package com.winet.ecommerce.exception;
 import com.winet.ecommerce.exception.custom.ApiException;
 import com.winet.ecommerce.exception.custom.ResourceNotFoundException;
 import com.winet.ecommerce.payload.response.ApiResponse;
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -70,9 +68,9 @@ public class GlobalExceptionHandler {
 		Map<String, String> errorsMap = new HashMap<>();
 
 		exception.getConstraintViolations()
-				.forEach(violation -> {
-					errorsMap.put(violation.getPropertyPath().toString(), violation.getMessage());
-				});
+				.forEach(violation ->
+						errorsMap.put(violation.getPropertyPath().toString(), violation.getMessage())
+				);
 
 		return new ResponseEntity<>(errorsMap, HttpStatus.BAD_REQUEST);
 	}

@@ -29,9 +29,6 @@ public class Product {
 	@Size(min = 6)
 	private String description;
 
-	@PositiveOrZero
-	private Integer quantity;
-
 	@Positive
 	private BigDecimal price;
 
