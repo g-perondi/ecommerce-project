@@ -1,6 +1,7 @@
 package com.winet.ecommerce.service.implementation;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.winet.ecommerce.model.Product;
 import com.winet.ecommerce.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,9 +9,10 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -45,7 +47,6 @@ public class FileServiceImpl implements FileService {
 		throw new IOException("Error parsing image file");
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	public void deleteImage(String filename) throws IOException {
 		String filepath = imagesPath + File.separator + filename;
