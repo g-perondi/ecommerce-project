@@ -131,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
 		Product productFromDb = productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-		if(productFromDb.getImage() != null) {
+		if(productFromDb.getImage() != null && !productFromDb.getImage().equals("default.png")) {
 			try {
 				fileService.deleteImage(productFromDb.getImage());
 			} catch(IOException e) {
