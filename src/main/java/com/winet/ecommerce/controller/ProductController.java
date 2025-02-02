@@ -5,6 +5,8 @@ import com.winet.ecommerce.payload.response.ProductResponse;
 import com.winet.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import static com.winet.ecommerce.util.PagingAndSortingUtils.*;
 
@@ -94,9 +97,24 @@ public class ProductController {
 	}
 
 	@PutMapping("/admin/products/{productId}/image")
-	public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestPart("image") MultipartFile image) throws IOException {
+	public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestPart("image") MultipartFile image) {
 		ProductDTO updatedProduct = productService.updateProductImage(productId, image);
 		return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/admin/products/export-csv", produces = "text/csv")
+	public ResponseEntity<InputStreamResource> getAllProductsCsv() {
+		InputStreamResource csv = this.productService.exportAllProductsToCsv();
+
+		String csvFileName = "products.csv";
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + csvFileName);
+		headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
+
+		return new ResponseEntity<>(
+				csv,
+				headers,
+				HttpStatus.OK);
 	}
 
 }

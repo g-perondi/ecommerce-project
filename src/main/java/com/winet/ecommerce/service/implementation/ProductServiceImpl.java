@@ -11,6 +11,7 @@ import com.winet.ecommerce.service.ProductService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -150,6 +151,25 @@ public class ProductServiceImpl implements ProductService {
 		Product updatedProduct = productRepository.save(productFromDb);
 
 		return modelMapper.map(updatedProduct, ProductDTO.class);
+	}
+
+	public InputStreamResource exportAllProductsToCsv() {
+		List<Product> allProducts = productRepository.findAll();
+
+		if(allProducts.isEmpty()) {
+			throw new ApiException("No products found");
+		}
+
+		InputStreamResource csv;
+
+		try {
+			csv = fileService.generateProductsCsv(allProducts);
+		} catch(IOException e) {
+			throw new ApiException("Error while exporting products to CSV");
+		}
+
+		return csv;
+
 	}
 
 	/**
