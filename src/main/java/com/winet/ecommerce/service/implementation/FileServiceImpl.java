@@ -40,6 +40,7 @@ public class FileServiceImpl implements FileService {
 		throw new IOException("Error parsing image file");
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	public void deleteImage(String filename) throws IOException {
 		String filepath = imagesPath + File.separator + filename;

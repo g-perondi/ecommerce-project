@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static com.winet.ecommerce.util.PagingAndSortingUtils.*;
@@ -89,6 +91,12 @@ public class ProductController {
 	) {
 		ProductResponse allProductsByPrice = productService.searchProductsByPrice(minPrice, maxPrice, page, size, sort, order);
 		return new ResponseEntity<>(allProductsByPrice, HttpStatus.OK);
+	}
+
+	@PutMapping("/admin/products/{productId}/image")
+	public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestPart("image") MultipartFile image) throws IOException {
+		ProductDTO updatedProduct = productService.updateProductImage(productId, image);
+		return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
 	}
 
 }

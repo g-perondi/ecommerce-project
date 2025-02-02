@@ -6,13 +6,17 @@ import com.winet.ecommerce.model.Product;
 import com.winet.ecommerce.payload.dto.ProductDTO;
 import com.winet.ecommerce.payload.response.ProductResponse;
 import com.winet.ecommerce.repository.ProductRepository;
+import com.winet.ecommerce.service.FileService;
 import com.winet.ecommerce.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Supplier;
@@ -24,11 +28,13 @@ import static com.winet.ecommerce.util.PagingAndSortingUtils.getPageDetails;
 public class ProductServiceImpl implements ProductService {
 
 	private final ProductRepository productRepository;
+	private final FileService fileService;
 	private final ModelMapper modelMapper;
 
 	@Autowired
-	public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
+	public ProductServiceImpl(ProductRepository productRepository, FileService fileService, ModelMapper modelMapper) {
 		this.productRepository = productRepository;
+		this.fileService = fileService;
 		this.modelMapper = modelMapper;
 	}
 
@@ -89,6 +95,14 @@ public class ProductServiceImpl implements ProductService {
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
+		if(!product.getImage().equals("default.png")) {
+			try {
+				fileService.deleteImage(product.getImage());
+			} catch(IOException e) {
+				System.out.println("Image not deleted");
+			}
+		}
+
 		productRepository.deleteById(productId);
 
 		return modelMapper.map(product, ProductDTO.class);
@@ -108,6 +122,34 @@ public class ProductServiceImpl implements ProductService {
 		return getPaginatedAndSortedProductResponse(
 				() -> productRepository.findByPriceBetween(BigDecimal.valueOf(minPrice), BigDecimal.valueOf(maxPrice), pageDetails)
 		);
+	}
+
+	@Override
+	@Transactional
+	public ProductDTO updateProductImage(Long productId, MultipartFile image) {
+		Product productFromDb = productRepository.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+		if(productFromDb.getImage() != null) {
+			try {
+				fileService.deleteImage(productFromDb.getImage());
+			} catch(IOException e) {
+				throw new ApiException("Previous file deletion failed");
+			}
+		}
+
+		String filename;
+
+		try {
+			filename = fileService.uploadImage(image);
+		} catch(IOException e) {
+			throw new ApiException("Error while uploading image");
+		}
+
+		productFromDb.setImage(filename);
+		Product updatedProduct = productRepository.save(productFromDb);
+
+		return modelMapper.map(updatedProduct, ProductDTO.class);
 	}
 
 	/**
