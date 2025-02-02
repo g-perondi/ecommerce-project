@@ -35,7 +35,9 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductResponse getAllProducts(Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
-		return getPaginatedAndSortedProductResponse(() -> productRepository.findAll(pageDetails));
+		return getPaginatedAndSortedProductResponse(
+				() -> productRepository.findAll(pageDetails)
+		);
 	}
 
 	@Override
@@ -95,15 +97,28 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductResponse searchProductsByKeyword(String keyword, Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
-		return getPaginatedAndSortedProductResponse(() -> productRepository.findByProductNameContainsIgnoreCase(keyword, pageDetails));
+		return getPaginatedAndSortedProductResponse(
+				() -> productRepository.findByProductNameContainsIgnoreCase(keyword, pageDetails)
+		);
 	}
 
 	@Override
 	public ProductResponse searchProductsByPrice(Double minPrice, Double maxPrice, Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
-		return getPaginatedAndSortedProductResponse(() -> productRepository.findByPriceBetween(BigDecimal.valueOf(minPrice), BigDecimal.valueOf(maxPrice), pageDetails));
+		return getPaginatedAndSortedProductResponse(
+				() -> productRepository.findByPriceBetween(BigDecimal.valueOf(minPrice), BigDecimal.valueOf(maxPrice), pageDetails)
+		);
 	}
 
+	/**
+	 * Retrieves a paginated and sorted list of products using the provided query supplier.
+	 * The query should return a {@link Page}<{@link Product}>, which is then converted into a
+	 * {@link ProductResponse} containing a list of {@link ProductDTO} along with pagination properties.
+	 *
+	 * @param query a {@link Supplier} that provides a {@link Page}<{@link Product}> when invoked.
+	 * @return a {@link ProductResponse} containing the paginated product data.
+	 * @throws ApiException if no products are found in the retrieved page.
+	 */
 	private ProductResponse getPaginatedAndSortedProductResponse(Supplier<Page<Product>> query) {
 		Page<Product> productsPage = query.get();
 		List<Product> allProducts = productsPage.getContent();
