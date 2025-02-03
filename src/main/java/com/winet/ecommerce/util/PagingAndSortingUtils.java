@@ -16,6 +16,8 @@ public final class PagingAndSortingUtils {
 	public static final String PRODUCT_DEFAULT_MIN_PRICE = "0.0";
 	public static final String PRODUCT_DEFAULT_MAX_PRICE = "9999.9";
 
+	public static final String CART_DEFAULT_SORT_BY = "cartId";
+
 	/**
 	 * Creates a {@link Pageable} object with the specified pagination and sorting details.
 	 *
