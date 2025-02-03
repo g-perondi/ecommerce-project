@@ -80,7 +80,7 @@ public class ProductController {
 				.buildAndExpand(savedProduct.getProductId())
 				.toUri();
 
-		return ResponseEntity.created(location).body(product);
+		return ResponseEntity.created(location).body(savedProduct);
 	}
 
 	@PutMapping("/admin/products/{productId}")
