@@ -46,6 +46,31 @@ public class ProductController {
 		return new ResponseEntity<>(product, HttpStatus.OK);
 	}
 
+	@GetMapping(value = "/public/products/search")
+	public ResponseEntity<ProductResponse> search(
+			@RequestParam(name = "keyword") String keyword,
+			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
+			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
+			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
+			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
+	) {
+		ProductResponse allProductsByKeyword = productService.search(keyword, page, size, sort, order);
+		return new ResponseEntity<>(allProductsByKeyword, HttpStatus.OK);
+	}
+
+	@GetMapping("/public/products/price")
+	public ResponseEntity<ProductResponse> search(
+			@RequestParam(name = "min", defaultValue = PRODUCT_DEFAULT_MIN_PRICE, required = false) double minPrice,
+			@RequestParam(name = "max", defaultValue = PRODUCT_DEFAULT_MAX_PRICE, required = false) double maxPrice,
+			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
+			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
+			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
+			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
+	) {
+		ProductResponse allProductsByPrice = productService.search(minPrice, maxPrice, page, size, sort, order);
+		return new ResponseEntity<>(allProductsByPrice, HttpStatus.OK);
+	}
+
 	@PostMapping("/admin/products")
 	public ResponseEntity<ProductDTO> add(@Valid @RequestBody ProductDTO product) {
 		ProductDTO savedProduct = productService.add(product);
@@ -68,31 +93,6 @@ public class ProductController {
 	public ResponseEntity<ProductDTO> delete(@PathVariable("productId") long productId) {
 		ProductDTO deletedProduct = productService.delete(productId);
 		return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
-	}
-
-	@GetMapping(value = "/public/products/search")
-	public ResponseEntity<ProductResponse> get(
-			@RequestParam(name = "keyword") String keyword,
-			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
-			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
-			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
-			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
-	) {
-		ProductResponse allProductsByKeyword = productService.search(keyword, page, size, sort, order);
-		return new ResponseEntity<>(allProductsByKeyword, HttpStatus.OK);
-	}
-
-	@GetMapping("/public/products/price")
-	public ResponseEntity<ProductResponse> get(
-			@RequestParam(name = "min", defaultValue = PRODUCT_DEFAULT_MIN_PRICE, required = false) double minPrice,
-			@RequestParam(name = "max", defaultValue = PRODUCT_DEFAULT_MAX_PRICE, required = false) double maxPrice,
-			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
-			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
-			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
-			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
-	) {
-		ProductResponse allProductsByPrice = productService.search(minPrice, maxPrice, page, size, sort, order);
-		return new ResponseEntity<>(allProductsByPrice, HttpStatus.OK);
 	}
 
 	@PutMapping("/admin/products/{productId}/image")
