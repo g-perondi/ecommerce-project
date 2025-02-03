@@ -15,6 +15,6 @@ public interface FileService {
 
 	InputStreamResource generateProductsCsv(List<ProductDTO> products) throws IOException;
 
-	public List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException;
+	List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException;
 
 }

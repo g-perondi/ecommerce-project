@@ -1,6 +1,5 @@
 package com.winet.ecommerce.service;
 
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.winet.ecommerce.payload.dto.ProductDTO;
 import com.winet.ecommerce.service.implementation.FileServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.mock.web.MockMultipartFile;
@@ -27,9 +25,6 @@ public class FileServiceTest {
 
 	@TempDir
 	Path tempDir;
-
-	@Mock
-	private CsvMapper mapper;
 
 	@InjectMocks
 	private FileServiceImpl fileService;

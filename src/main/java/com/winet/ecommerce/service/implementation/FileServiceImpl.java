@@ -68,7 +68,9 @@ public class FileServiceImpl implements FileService {
 
 	public InputStreamResource generateProductsCsv(List<ProductDTO> products) throws IOException {
 		CsvMapper mapper = new CsvMapper();
-		CsvSchema schema = mapper.schemaFor(Product.class).withHeader();
+		CsvSchema schema = mapper.schemaFor(Product.class)
+				.withHeader()
+				.withColumnReordering(true);
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		mapper.writer(schema).writeValue(outputStream, products);
@@ -79,9 +81,10 @@ public class FileServiceImpl implements FileService {
 	}
 
 	public List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException {
-
 		CsvMapper mapper = new CsvMapper();
-		CsvSchema schema = mapper.schemaFor(ProductDTO.class).withHeader().withColumnReordering(true);
+		CsvSchema schema = mapper.schemaFor(ProductDTO.class)
+				.withHeader()
+				.withColumnReordering(true);
 
 		try(MappingIterator<ProductDTO> iterator =
 					mapper.readerFor(ProductDTO.class).with(schema).readValues(csvFile.getInputStream())) {
