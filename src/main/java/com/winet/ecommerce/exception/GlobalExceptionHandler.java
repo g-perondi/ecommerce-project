@@ -26,11 +26,11 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(value = { ApiException.class })
 	public ResponseEntity<ApiResponse> handleApiException(ApiException exception) {
 		ApiResponse apiResponse = new ApiResponse(exception.getMessage(), false);
-		return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ResponseStatus(HttpStatus.NOT_FOUND)

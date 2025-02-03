@@ -1,8 +1,10 @@
 package com.winet.ecommerce.service.implementation;
 
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.winet.ecommerce.model.Product;
+import com.winet.ecommerce.payload.dto.ProductDTO;
 import com.winet.ecommerce.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -60,7 +62,7 @@ public class FileServiceImpl implements FileService {
 		throw new IOException("Error processing image file");
 	}
 
-	public InputStreamResource generateProductsCsv(List<Product> products) throws IOException {
+	public InputStreamResource generateProductsCsv(List<ProductDTO> products) throws IOException {
 		CsvMapper mapper = new CsvMapper();
 		CsvSchema schema = mapper.schemaFor(Product.class).withHeader();
 
@@ -70,6 +72,17 @@ public class FileServiceImpl implements FileService {
 		return new InputStreamResource(
 				new ByteArrayInputStream(outputStream.toByteArray())
 		);
+	}
+
+	public List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException {
+
+		CsvMapper mapper = new CsvMapper();
+
+		try(MappingIterator<ProductDTO> iterator =
+					mapper.readerWithTypedSchemaFor(ProductDTO.class).readValues(csvFile.getInputStream())) {
+			return iterator.readAll();
+		}
+
 	}
 
 }

@@ -25,4 +25,6 @@ public interface ProductService {
 
 	InputStreamResource exportAllProductsToCsv();
 
+	void importAllProductsFromCsv(MultipartFile file);
+
 }

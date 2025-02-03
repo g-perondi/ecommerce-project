@@ -1,6 +1,7 @@
 package com.winet.ecommerce.controller;
 
 import com.winet.ecommerce.payload.dto.ProductDTO;
+import com.winet.ecommerce.payload.response.ApiResponse;
 import com.winet.ecommerce.payload.response.ProductResponse;
 import com.winet.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
@@ -112,7 +113,14 @@ public class ProductController {
 		return new ResponseEntity<>(
 				csv,
 				headers,
-				HttpStatus.OK);
+				HttpStatus.OK
+		);
+	}
+
+	@PostMapping(value = "/admin/products/import-csv", consumes = "text/csv")
+	public ResponseEntity<ApiResponse> importProductsToCsv(@RequestPart("products") MultipartFile products) {
+		this.productService.importAllProductsFromCsv(products);
+		return new ResponseEntity<>(new ApiResponse("Product import successful.", true), HttpStatus.CREATED);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.winet.ecommerce.service;
 
-import com.winet.ecommerce.model.Product;
+import com.winet.ecommerce.payload.dto.ProductDTO;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +13,8 @@ public interface FileService {
 
 	void deleteImage(String filename) throws IOException;
 
-	InputStreamResource generateProductsCsv(List<Product> products) throws IOException;
+	InputStreamResource generateProductsCsv(List<ProductDTO> products) throws IOException;
+
+	public List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException;
 
 }

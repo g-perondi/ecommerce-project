@@ -1,9 +1,9 @@
 FROM mysql:latest
 
 ENV MYSQL_ROOT_PASSWORD=rootpassword
-    MYSQL_DATABASE=ecommerce
-    MYSQL_USER=ecommerce-admin
-    MYSQL_PASSWORD=root
+ENV MYSQL_DATABASE=ecommerce
+ENV MYSQL_USER=ecommerce-admin
+ENV MYSQL_PASSWORD=root
 
 EXPOSE 3306
 

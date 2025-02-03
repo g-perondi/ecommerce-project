@@ -153,8 +153,33 @@ public class ProductServiceImpl implements ProductService {
 		return modelMapper.map(updatedProduct, ProductDTO.class);
 	}
 
+	@Override
+	@Transactional
+	public void importAllProductsFromCsv(MultipartFile file) {
+
+		List<ProductDTO> fromCsv;
+
+		try {
+			fromCsv = this.fileService.readProductsCsv(file);
+		} catch(IOException e) {
+			throw new ApiException("Error while importing products from CSV");
+		}
+
+		List<Product> productsList = fromCsv.stream()
+				.map(productDTO -> modelMapper.map(productDTO, Product.class))
+				.toList();
+
+		this.productRepository.saveAll(productsList);
+	}
+
+	@Override
+	@Transactional
 	public InputStreamResource exportAllProductsToCsv() {
 		List<Product> allProducts = productRepository.findAll();
+
+		List<ProductDTO> allProductsDTO = allProducts.stream()
+				.map(product -> modelMapper.map(product, ProductDTO.class))
+				.toList();
 
 		if(allProducts.isEmpty()) {
 			throw new ApiException("No products found");
@@ -163,7 +188,7 @@ public class ProductServiceImpl implements ProductService {
 		InputStreamResource csv;
 
 		try {
-			csv = fileService.generateProductsCsv(allProducts);
+			csv = fileService.generateProductsCsv(allProductsDTO);
 		} catch(IOException e) {
 			throw new ApiException("Error while exporting products to CSV");
 		}
