@@ -6,6 +6,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.winet.ecommerce.model.Product;
 import com.winet.ecommerce.payload.dto.ProductDTO;
 import com.winet.ecommerce.service.FileService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Setter
+@Getter
 public class FileServiceImpl implements FileService {
 
 	@Value("${project.images.path}")
@@ -77,12 +81,12 @@ public class FileServiceImpl implements FileService {
 	public List<ProductDTO> readProductsCsv(MultipartFile csvFile) throws IOException {
 
 		CsvMapper mapper = new CsvMapper();
+		CsvSchema schema = mapper.schemaFor(ProductDTO.class).withHeader().withColumnReordering(true);
 
 		try(MappingIterator<ProductDTO> iterator =
-					mapper.readerWithTypedSchemaFor(ProductDTO.class).readValues(csvFile.getInputStream())) {
+					mapper.readerFor(ProductDTO.class).with(schema).readValues(csvFile.getInputStream())) {
 			return iterator.readAll();
 		}
-
 	}
 
 }

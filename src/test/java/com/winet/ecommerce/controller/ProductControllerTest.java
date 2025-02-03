@@ -148,7 +148,7 @@ public class ProductControllerTest {
 
 		// When & Then
 		mockMvc.perform(
-				multipart(HttpMethod.PUT, "/api/v1/admin/products/1/image").file(imageFile)
+						multipart(HttpMethod.PUT, "/api/v1/admin/products/1/image").file(imageFile)
 				)
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.productName").value("Laptop"));

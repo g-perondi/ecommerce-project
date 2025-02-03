@@ -147,7 +147,7 @@ public class ProductServiceTest {
 
 		List<Product> products = List.of(product);
 		List<ProductDTO> productsDTO = List.of(productDTO);
-		String csvData = "id,productName,description,price,discount,rating,imageUrl\n1,Laptop,description,1200.00,0.00,0.0,laptop.jpg\n";
+		String csvData = "id,productName,description,price,discount,rating,imageUrl\n1,Laptop,description,1200.00,0.00,0.0,laptop.png\n";
 		InputStreamResource inputStreamResource = new InputStreamResource(new ByteArrayInputStream(csvData.getBytes()));
 
 		given(productRepository.findAll()).willReturn(products);
