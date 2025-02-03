@@ -62,13 +62,11 @@ public class CartService {
 		);
 	}
 
-
+	// TODO:
 	// CartDTO addProduct(Long productId, Integer quantity)
 	// CartDTO getForUser(String email, Long cartId)
 	// CartDTO updateProductQuantity(Long productId, String operation)
 	// String deleteProduct(Long cartId, Long productId)
 	// public void updateProduct(Long cartId, Long productId)
-	// private Cart createCart()
-	// private CartResponse getPaginatedAndSorted(Supplier<Page<Cart>>)
 
 }

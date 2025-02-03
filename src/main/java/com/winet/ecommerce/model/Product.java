@@ -16,14 +16,6 @@ import java.util.List;
 @Entity
 public class Product {
 
-	@ToString.Exclude
-	@OneToMany(
-			mappedBy = "product",
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE },
-			fetch = FetchType.EAGER
-	)
-	List<CartItem> cartItems;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long productId;
@@ -38,12 +30,20 @@ public class Product {
 
 	@Positive
 	private BigDecimal price;
-	private BigDecimal specialPrice;
 
+	private BigDecimal specialPrice;
 	@PositiveOrZero
 	private Double discount;
+
 	private String image;
 
+	@ToString.Exclude
+	@OneToMany(
+			mappedBy = "product",
+			cascade = { CascadeType.PERSIST, CascadeType.MERGE },
+			fetch = FetchType.EAGER
+	)
+	List<CartItem> cartItems;
 
 	public Product(Long productId, String productName, String description, BigDecimal price, BigDecimal specialPrice, Double discount, String image) {
 		this.productId = productId;
