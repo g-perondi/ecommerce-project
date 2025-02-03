@@ -30,25 +30,25 @@ public class ProductController {
 	}
 
 	@GetMapping("public/products")
-	public ResponseEntity<ProductResponse> getProducts(
+	public ResponseEntity<ProductResponse> get(
 			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
 			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
 			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
 			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
 	) {
-		ProductResponse allProducts = productService.getAllProducts(page, size, sort, order);
+		ProductResponse allProducts = productService.getAll(page, size, sort, order);
 		return new ResponseEntity<>(allProducts, HttpStatus.OK);
 	}
 
 	@GetMapping("/public/products/{productId}")
-	public ResponseEntity<ProductDTO> getProduct(@PathVariable("productId") long productId) {
-		ProductDTO product = productService.getProduct(productId);
+	public ResponseEntity<ProductDTO> get(@PathVariable("productId") long productId) {
+		ProductDTO product = productService.get(productId);
 		return new ResponseEntity<>(product, HttpStatus.OK);
 	}
 
 	@PostMapping("/admin/products")
-	public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO product) {
-		ProductDTO savedProduct = productService.addProduct(product);
+	public ResponseEntity<ProductDTO> add(@Valid @RequestBody ProductDTO product) {
+		ProductDTO savedProduct = productService.add(product);
 
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{productId}")
@@ -59,31 +59,31 @@ public class ProductController {
 	}
 
 	@PutMapping("/admin/products/{productId}")
-	public ResponseEntity<ProductDTO> updateProduct(@PathVariable("productId") long productId, @Valid @RequestBody ProductDTO product) {
-		ProductDTO savedProduct = productService.updateProduct(productId, product);
+	public ResponseEntity<ProductDTO> update(@PathVariable("productId") long productId, @Valid @RequestBody ProductDTO product) {
+		ProductDTO savedProduct = productService.update(productId, product);
 		return new ResponseEntity<>(savedProduct, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/admin/products/{productId}")
-	public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("productId") long productId) {
-		ProductDTO deletedProduct = productService.deleteProduct(productId);
+	public ResponseEntity<ProductDTO> delete(@PathVariable("productId") long productId) {
+		ProductDTO deletedProduct = productService.delete(productId);
 		return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/public/products/search")
-	public ResponseEntity<ProductResponse> getAllProductsByKeyword(
+	public ResponseEntity<ProductResponse> get(
 			@RequestParam(name = "keyword") String keyword,
 			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
 			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
 			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
 			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
 	) {
-		ProductResponse allProductsByKeyword = productService.searchProductsByKeyword(keyword, page, size, sort, order);
+		ProductResponse allProductsByKeyword = productService.search(keyword, page, size, sort, order);
 		return new ResponseEntity<>(allProductsByKeyword, HttpStatus.OK);
 	}
 
 	@GetMapping("/public/products/price")
-	public ResponseEntity<ProductResponse> getAllProductsByPrice(
+	public ResponseEntity<ProductResponse> get(
 			@RequestParam(name = "min", defaultValue = PRODUCT_DEFAULT_MIN_PRICE, required = false) double minPrice,
 			@RequestParam(name = "max", defaultValue = PRODUCT_DEFAULT_MAX_PRICE, required = false) double maxPrice,
 			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
@@ -91,19 +91,19 @@ public class ProductController {
 			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
 			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
 	) {
-		ProductResponse allProductsByPrice = productService.searchProductsByPrice(minPrice, maxPrice, page, size, sort, order);
+		ProductResponse allProductsByPrice = productService.search(minPrice, maxPrice, page, size, sort, order);
 		return new ResponseEntity<>(allProductsByPrice, HttpStatus.OK);
 	}
 
 	@PutMapping("/admin/products/{productId}/image")
-	public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestPart("image") MultipartFile image) {
-		ProductDTO updatedProduct = productService.updateProductImage(productId, image);
+	public ResponseEntity<ProductDTO> updateImage(@PathVariable Long productId, @RequestPart("image") MultipartFile image) {
+		ProductDTO updatedProduct = productService.updateImage(productId, image);
 		return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/admin/products/export-csv", produces = "text/csv")
-	public ResponseEntity<InputStreamResource> getAllProductsCsv() {
-		InputStreamResource csv = this.productService.exportAllProductsToCsv();
+	public ResponseEntity<InputStreamResource> getCsv() {
+		InputStreamResource csv = this.productService.exportCsv();
 
 		String csvFileName = "products.csv";
 		HttpHeaders headers = new HttpHeaders();
@@ -118,8 +118,8 @@ public class ProductController {
 	}
 
 	@PostMapping(value = "/admin/products/import-csv", consumes = "text/csv")
-	public ResponseEntity<ApiResponse> importProductsToCsv(@RequestPart("products") MultipartFile products) {
-		this.productService.importAllProductsFromCsv(products);
+	public ResponseEntity<ApiResponse> importCsv(@RequestPart("products") MultipartFile products) {
+		this.productService.importCsv(products);
 		return new ResponseEntity<>(new ApiResponse("Product import successful.", true), HttpStatus.CREATED);
 	}
 

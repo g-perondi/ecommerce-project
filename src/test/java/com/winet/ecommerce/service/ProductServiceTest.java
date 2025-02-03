@@ -4,7 +4,6 @@ import com.winet.ecommerce.model.Product;
 import com.winet.ecommerce.payload.dto.ProductDTO;
 import com.winet.ecommerce.payload.response.ProductResponse;
 import com.winet.ecommerce.repository.ProductRepository;
-import com.winet.ecommerce.service.implementation.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +37,7 @@ public class ProductServiceTest {
 	private FileService fileService;
 
 	@InjectMocks
-	private ProductServiceImpl productService;
+	private ProductService productService;
 
 	private Product product;
 	private ProductDTO productDTO;
@@ -52,45 +51,45 @@ public class ProductServiceTest {
 	}
 
 	@Test
-	void testGetProductById_BasicScenario() {
+	void testGetById_BasicScenario() {
 		given(productRepository.findById(1L)).willReturn(Optional.of(product));
 
-		ProductDTO result = productService.getProduct(1L);
+		ProductDTO result = productService.get(1L);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getProductName()).isEqualTo("Laptop");
 	}
 
 	@Test
-	void testAddProduct_BasicScenario() {
+	void testAdd_BasicScenario() {
 		given(productRepository.save(product)).willReturn(product);
 
-		ProductDTO result = productService.addProduct(productDTO);
+		ProductDTO result = productService.add(productDTO);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getProductName()).isEqualTo("Laptop");
 	}
 
 	@Test
-	void testDeleteProduct_BasicScenario() {
+	void testDelete_BasicScenario() {
 		given(productRepository.findById(1L)).willReturn(Optional.of(product));
 		willDoNothing().given(productRepository).deleteById(1L);
 
-		ProductDTO result = productService.deleteProduct(1L);
+		ProductDTO result = productService.delete(1L);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getProductName()).isEqualTo("Laptop");
 	}
 
 	@Test
-	void testUpdateProductImage_BasicScenario() throws IOException {
+	void testUpdateImage_BasicScenario() throws IOException {
 		MultipartFile mockImage = mock(MultipartFile.class);
 
 		given(productRepository.findById(1L)).willReturn(Optional.of(product));
 		given(fileService.uploadImage(mockImage)).willReturn(product.getImage());
 		given(productRepository.save(any())).willReturn(product);
 
-		ProductDTO result = productService.updateProductImage(1L, mockImage);
+		ProductDTO result = productService.updateImage(1L, mockImage);
 
 		assertThat(result).isNotNull();
 		assertThat(result.getProductName()).isEqualTo("Laptop");
@@ -98,21 +97,21 @@ public class ProductServiceTest {
 	}
 
 	@Test
-	void testSearchProductsByKeyword_BasicScenario() {
+	void testSearch_ProductName() {
 		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
 		Page<Product> page = new PageImpl<>(List.of(product));
 
 		given(productRepository.findByProductNameContainsIgnoreCase("Laptop", pageable))
 				.willReturn(page);
 
-		ProductResponse response = productService.searchProductsByKeyword("Laptop", 0, 10, "productName", "asc");
+		ProductResponse response = productService.search("Laptop", 0, 10, "productName", "asc");
 
 		assertThat(response.getTotalElements()).isEqualTo(1);
 		assertThat(response.getContent().get(0).getProductName()).isEqualTo("Laptop");
 	}
 
 	@Test
-	void testSearchProductsByPrice_BasicScenario() {
+	void testSearch_BasicScenario() {
 		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
 		Page<Product> page = new PageImpl<>(List.of(product));
 
@@ -120,7 +119,7 @@ public class ProductServiceTest {
 				.willReturn(page);
 		given(modelMapper.map(any(Product.class), eq(ProductDTO.class))).willReturn(productDTO);
 
-		ProductResponse response = productService.searchProductsByPrice(1000.0, 1500.0, 0, 10, "productName", "asc");
+		ProductResponse response = productService.search(1000.0, 1500.0, 0, 10, "productName", "asc");
 
 		assertThat(response.getTotalElements()).isEqualTo(1);
 		assertThat(response.getContent().size()).isEqualTo(1);
@@ -128,7 +127,7 @@ public class ProductServiceTest {
 	}
 
 	@Test
-	void testImportAllProductsFromCsv() throws IOException {
+	void testImportAllFromCsv() throws IOException {
 		MultipartFile mockCsv = mock(MultipartFile.class);
 
 		List<Product> parsedProducts = List.of(product);
@@ -136,14 +135,14 @@ public class ProductServiceTest {
 
 		given(fileService.readProductsCsv(mockCsv)).willReturn(parsedProductsDTO);
 
-		productService.importAllProductsFromCsv(mockCsv);
+		productService.importCsv(mockCsv);
 
 		then(fileService).should(times(1)).readProductsCsv(mockCsv);
 		then(productRepository).should(times(1)).saveAll(parsedProducts);
 	}
 
 	@Test
-	void testExportAllProductsToCsv() throws IOException {
+	void testExportCsv() throws IOException {
 
 		List<Product> products = List.of(product);
 		List<ProductDTO> productsDTO = List.of(productDTO);
@@ -154,7 +153,7 @@ public class ProductServiceTest {
 
 		given(fileService.generateProductsCsv(productsDTO)).willReturn(inputStreamResource);
 
-		InputStreamResource result = productService.exportAllProductsToCsv();
+		InputStreamResource result = productService.exportCsv();
 
 		assertThat(result).isNotNull();
 		then(fileService).should(times(1)).generateProductsCsv(productsDTO);

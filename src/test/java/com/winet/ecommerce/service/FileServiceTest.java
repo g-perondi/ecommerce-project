@@ -1,7 +1,6 @@
 package com.winet.ecommerce.service;
 
 import com.winet.ecommerce.payload.dto.ProductDTO;
-import com.winet.ecommerce.service.implementation.FileServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,11 +26,11 @@ public class FileServiceTest {
 	Path tempDir;
 
 	@InjectMocks
-	private FileServiceImpl fileService;
+	private FileService fileService;
 
 	@BeforeEach
 	void setUp() {
-		fileService = new FileServiceImpl();
+		fileService = new FileService();
 		fileService.setImagesPath(tempDir.toString());
 	}
 

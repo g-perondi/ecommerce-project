@@ -47,8 +47,8 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testGetProducts() throws Exception {
-		given(productService.getAllProducts(0, 10, "name", "asc")).willReturn(productResponse);
+	void testGetAll() throws Exception {
+		given(productService.getAll(0, 10, "name", "asc")).willReturn(productResponse);
 
 		mockMvc.perform(get("/api/v1/public/products")
 						.param("page", "0")
@@ -62,8 +62,8 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testGetProduct() throws Exception {
-		given(productService.getProduct(1L)).willReturn(productDTO);
+	void testGet() throws Exception {
+		given(productService.get(1L)).willReturn(productDTO);
 
 		mockMvc.perform(get("/api/v1/public/products/1")
 						.contentType(MediaType.APPLICATION_JSON))
@@ -72,8 +72,8 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testAddProduct() throws Exception {
-		given(productService.addProduct(any(ProductDTO.class))).willReturn(productDTO);
+	void testAdd() throws Exception {
+		given(productService.add(any(ProductDTO.class))).willReturn(productDTO);
 
 		mockMvc.perform(post("/api/v1/admin/products")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -84,8 +84,8 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testUpdateProduct() throws Exception {
-		given(productService.updateProduct(eq(1L), any(ProductDTO.class))).willReturn(productDTO);
+	void testUpdate() throws Exception {
+		given(productService.update(eq(1L), any(ProductDTO.class))).willReturn(productDTO);
 
 		mockMvc.perform(put("/api/v1/admin/products/1")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -95,8 +95,8 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testDeleteProduct() throws Exception {
-		given(productService.deleteProduct(1L)).willReturn(productDTO);
+	void testDelete() throws Exception {
+		given(productService.delete(1L)).willReturn(productDTO);
 
 		mockMvc.perform(delete("/api/v1/admin/products/1")
 						.contentType(MediaType.APPLICATION_JSON))
@@ -106,9 +106,9 @@ public class ProductControllerTest {
 
 
 	@Test
-	void testSearchProductsByKeyword() throws Exception {
+	void testSearch_ByName() throws Exception {
 		// Given
-		given(productService.searchProductsByKeyword("Laptop", 0, 10, "name", "asc")).willReturn(productResponse);
+		given(productService.search("Laptop", 0, 10, "name", "asc")).willReturn(productResponse);
 
 		// When & Then
 		mockMvc.perform(get("/api/v1/public/products/search")
@@ -123,9 +123,9 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testSearchProductsByPrice() throws Exception {
+	void testSearch_ByPrice() throws Exception {
 		// Given
-		given(productService.searchProductsByPrice(1000.0, 1500.0, 0, 10, "price", "asc")).willReturn(productResponse);
+		given(productService.search(1000.0, 1500.0, 0, 10, "price", "asc")).willReturn(productResponse);
 
 		// When & Then
 		mockMvc.perform(get("/api/v1/public/products/price")
@@ -141,10 +141,10 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testUpdateProductImage() throws Exception {
+	void testUpdateImage() throws Exception {
 		// Given
 		MockMultipartFile imageFile = new MockMultipartFile("image", "laptop.jpg", "image/jpeg", "fake-image-content".getBytes());
-		given(productService.updateProductImage(eq(1L), any(MultipartFile.class))).willReturn(productDTO);
+		given(productService.updateImage(eq(1L), any(MultipartFile.class))).willReturn(productDTO);
 
 		// When & Then
 		mockMvc.perform(
@@ -155,10 +155,10 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testExportAllProductsToCsv() throws Exception {
+	void testExportCsv() throws Exception {
 		// Given
 		InputStreamResource csvResource = new InputStreamResource(new ByteArrayInputStream("id,productName\n1,Laptop".getBytes()));
-		given(productService.exportAllProductsToCsv()).willReturn(csvResource);
+		given(productService.exportCsv()).willReturn(csvResource);
 
 		// When & Then
 		mockMvc.perform(get("/api/v1/admin/products/export-csv"))
@@ -167,7 +167,7 @@ public class ProductControllerTest {
 	}
 
 	@Test
-	void testImportAllProductsFromCsv() throws Exception {
+	void testImportCsv() throws Exception {
 		MockMultipartFile csvFile = new MockMultipartFile(
 				"products",
 				"products.csv",
