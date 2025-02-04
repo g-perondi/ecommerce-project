@@ -41,6 +41,8 @@ public class WebSecurityConfig {
 						.requestMatchers("/v3/api-docs/**").permitAll()
 						.requestMatchers("/api/v1/public/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
+						.requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+						.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
 						.anyRequest().authenticated()
 		);
 

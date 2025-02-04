@@ -115,10 +115,9 @@ public class CartService {
 		cartItem.setDiscount(product.getDiscount());
 		cartItem.setProductPrice(product.getSpecialPrice());
 
-		userCart.setTotalPrice(userCart.getTotalPrice()
-				.add(
+		userCart.setTotalPrice(
 						cartItem.getProductPrice()
-								.multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+								.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
 		);
 
 		CartItem updatedCartItem = cartItemRepository.save(cartItem);
