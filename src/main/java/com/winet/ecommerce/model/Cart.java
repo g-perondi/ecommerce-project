@@ -30,4 +30,8 @@ public class Cart {
 	)
 	private List<CartItem> cartItems = new ArrayList<>();
 
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
 }
