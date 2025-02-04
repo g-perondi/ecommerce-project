@@ -1,13 +1,11 @@
 package com.winet.ecommerce.controller;
 
+import com.winet.ecommerce.payload.dto.CartDTO;
 import com.winet.ecommerce.payload.response.CartResponse;
 import com.winet.ecommerce.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.winet.ecommerce.util.PagingAndSortingUtils.*;
 
@@ -30,6 +28,31 @@ public class CartController {
 	) {
 		CartResponse cartResponse = this.cartService.getAll(page, size, sort, order);
 		return new ResponseEntity<>(cartResponse, HttpStatus.OK);
+	}
+
+	@PostMapping("carts/products/{productId}")
+	public ResponseEntity<CartDTO> addProduct(
+			@PathVariable Long productId,
+			@RequestParam(value = "quantity", defaultValue = "1", required = false) Integer quantity) {
+		CartDTO cartDTO = cartService.addProduct(productId, quantity);
+
+		return new ResponseEntity<>(cartDTO, HttpStatus.OK);
+	}
+
+	@PutMapping("carts/{cartId}/products/{productId}/{operation}")
+	public ResponseEntity<CartDTO> updateProductQuantity(
+			@PathVariable Long cartId,
+			@PathVariable Long productId,
+			@PathVariable String operation
+	) {
+		CartDTO cartDTO = cartService.updateProductQuantity(cartId, productId, operation);
+		return new ResponseEntity<>(cartDTO, HttpStatus.OK);
+	}
+
+	@DeleteMapping("carts/{cartId}/products/{productId}")
+	public ResponseEntity<CartDTO> deleteProduct(@PathVariable Long cartId, @PathVariable Long productId) {
+		CartDTO cartDTO = cartService.deleteProduct(cartId, productId);
+		return new ResponseEntity<>(cartDTO, HttpStatus.OK);
 	}
 
 }

@@ -24,6 +24,9 @@ public class CartItem {
 	@PositiveOrZero
 	private BigDecimal productPrice;
 
+	@PositiveOrZero
+	private Double discount;
+
 	@ManyToOne
 	@JoinColumn(name = "cart_id")
 	private Cart cart;

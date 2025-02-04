@@ -32,6 +32,7 @@ public class Product {
 	private BigDecimal price;
 
 	private BigDecimal specialPrice;
+
 	@PositiveOrZero
 	private Double discount;
 
