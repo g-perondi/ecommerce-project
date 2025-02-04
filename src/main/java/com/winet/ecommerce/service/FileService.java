@@ -41,7 +41,7 @@ public class FileService {
 			File directory = new File(imagesPath);
 
 			if(!directory.exists()) {
-				directory.mkdir();
+				directory.mkdirs();
 			}
 
 			Files.copy(image.getInputStream(), Paths.get(filePath));

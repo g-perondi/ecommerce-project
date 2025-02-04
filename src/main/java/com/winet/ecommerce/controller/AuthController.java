@@ -24,9 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/auth")
@@ -47,6 +45,7 @@ public class AuthController {
 
 	@PostMapping("/sign-in")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+
 		Authentication authentication;
 		try {
 			authentication = authenticationManager
@@ -126,7 +125,7 @@ public class AuthController {
 				.map(GrantedAuthority::getAuthority)
 				.toList();
 
-		UserInfoResponse response = new UserInfoResponse(userDetails.getId(),userDetails.getEmail(), userDetails.getUsername(), roles);
+		UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getEmail(), userDetails.getUsername(), roles);
 
 		return ResponseEntity.ok(response);
 	}

@@ -11,7 +11,7 @@ import com.winet.ecommerce.payload.response.CartResponse;
 import com.winet.ecommerce.repository.CartItemRepository;
 import com.winet.ecommerce.repository.CartRepository;
 import com.winet.ecommerce.repository.ProductRepository;
-import com.winet.ecommerce.repository.UserRepository;
+import com.winet.ecommerce.util.AuthUtils;
 import com.winet.ecommerce.util.DtoUtils;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -32,18 +32,18 @@ public class CartService {
 	private final ProductRepository productRepository;
 	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
-	private final UserRepository userRepository;
 	private final ModelMapper modelMapper;
 	private final DtoUtils dtoUtils;
+	private final AuthUtils authUtils;
 
 	@Autowired
-	public CartService(ProductRepository productRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, UserRepository userRepository, ModelMapper modelMapper, DtoUtils dtoUtils) {
+	public CartService(ProductRepository productRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper, DtoUtils dtoUtils, AuthUtils authUtils) {
 		this.productRepository = productRepository;
 		this.cartRepository = cartRepository;
 		this.cartItemRepository = cartItemRepository;
-		this.userRepository = userRepository;
 		this.modelMapper = modelMapper;
 		this.dtoUtils = dtoUtils;
+		this.authUtils = authUtils;
 	}
 
 	public CartResponse getAll(Integer page, Integer size, String sort, String order) {
@@ -96,19 +96,19 @@ public class CartService {
 	}
 
 	@Transactional
-	public CartDTO updateProductQuantity(Long cartId, Long productId, String operation) {
+	public CartDTO updateProductQuantity(Long productId, String operation) {
 
-		// TODO
-		Cart userCart = createCart();
-		// retrieve user Cart from authenticated user
-		// check if the Cart user is the same as the cart from authenticated user or the role is ADMIN
+		String email = authUtils.loggedInEmail();
+
+		Cart userCart = cartRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("Cart", "email", email));
 
 		int valueToChange = operation.equalsIgnoreCase("add") ? 1 : -1;
 
 		Product product = productRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-		CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, cartId)
+		CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, userCart.getCartId())
 				.orElseThrow(() -> new ApiException(product.getProductName() + " is not in the cart"));
 
 		cartItem.setQuantity(cartItem.getQuantity() + valueToChange);
@@ -136,15 +136,14 @@ public class CartService {
 	}
 
 	@Transactional
-	public CartDTO deleteProduct(Long cartId, Long productId) {
+	public CartDTO deleteProduct(Long productId) {
 
-		// TODO
-		// modify with Cart from authenticated user
-		// check if the Cart user is the same as the cart from authenticated user or the role is ADMIN
-		Cart userCart = cartRepository.findById(cartId)
-				.orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
+		String email = authUtils.loggedInEmail();
 
-		CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, cartId)
+		Cart userCart = cartRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("Cart", "email", email));
+
+		CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, userCart.getCartId())
 				.orElseThrow(() -> new ApiException("Product is not in the cart"));
 
 		cartItemRepository.delete(productId, userCart.getCartId());
@@ -159,22 +158,27 @@ public class CartService {
 
 	private Cart createCart() {
 
-		// TODO
-		// retrieve user cart from authenticated user
+		String email = authUtils.loggedInEmail();
+
+		Cart userCart = cartRepository.findByEmail(email)
+				.orElse(null);
+
+		if(userCart != null) {
+			return userCart;
+		}
 
 		Cart cart = new Cart();
 		cart.setTotalPrice(BigDecimal.ZERO);
+		cart.setUser(authUtils.loggedInUser());
 
 		return cartRepository.save(cart);
 	}
 
-
-	private CartDTO getForUser(String email, Long cartId) {
+	public CartDTO getForUser(String email, Long cartId) {
 		Cart cart = cartRepository.findByUserEmailAndCartId(email, cartId)
 				.orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 		return dtoUtils.convertToDTO(cart);
 	}
-
 
 	private CartResponse getPaginatedAndSortedProductResponse(Supplier<Page<Cart>> query) {
 		Page<Cart> productsPage = query.get();
