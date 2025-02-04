@@ -44,11 +44,11 @@ public class JwtUtils {
 		} catch(MalformedJwtException e) {
 			LOGGER.error("Invalid JWT token: {}", e.getMessage());
 		} catch(ExpiredJwtException e) {
-			LOGGER.error("Expired JWT token: {}",e.getMessage());
+			LOGGER.error("Expired JWT token: {}", e.getMessage());
 		} catch(UnsupportedJwtException e) {
-			LOGGER.error("Unsupported JWT token: {}",e.getMessage());
+			LOGGER.error("Unsupported JWT token: {}", e.getMessage());
 		} catch(IllegalArgumentException e) {
-			LOGGER.error("JWT claims string is empty: {}",e.getMessage());
+			LOGGER.error("JWT claims string is empty: {}", e.getMessage());
 		}
 		return false;
 	}
@@ -64,7 +64,7 @@ public class JwtUtils {
 
 	public String getJwtFromCookie(HttpServletRequest request) {
 		Cookie cookie = WebUtils.getCookie(request, jwtCookieName);
-		if (cookie != null) {
+		if(cookie != null) {
 			return cookie.getValue();
 		} else {
 			return null;
@@ -97,4 +97,5 @@ public class JwtUtils {
 	private Key key() {
 		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
 	}
+
 }

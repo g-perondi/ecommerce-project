@@ -11,6 +11,7 @@ import com.winet.ecommerce.payload.response.CartResponse;
 import com.winet.ecommerce.repository.CartItemRepository;
 import com.winet.ecommerce.repository.CartRepository;
 import com.winet.ecommerce.repository.ProductRepository;
+import com.winet.ecommerce.repository.UserRepository;
 import com.winet.ecommerce.util.DtoUtils;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -31,14 +32,16 @@ public class CartService {
 	private final ProductRepository productRepository;
 	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
+	private final UserRepository userRepository;
 	private final ModelMapper modelMapper;
 	private final DtoUtils dtoUtils;
 
 	@Autowired
-	public CartService(ProductRepository productRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper, DtoUtils dtoUtils) {
+	public CartService(ProductRepository productRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, UserRepository userRepository, ModelMapper modelMapper, DtoUtils dtoUtils) {
 		this.productRepository = productRepository;
 		this.cartRepository = cartRepository;
 		this.cartItemRepository = cartItemRepository;
+		this.userRepository = userRepository;
 		this.modelMapper = modelMapper;
 		this.dtoUtils = dtoUtils;
 	}
@@ -46,26 +49,6 @@ public class CartService {
 	public CartResponse getAll(Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
 		return getPaginatedAndSortedProductResponse(() -> cartRepository.findAll(pageDetails));
-	}
-
-	private CartResponse getPaginatedAndSortedProductResponse(Supplier<Page<Cart>> query) {
-		Page<Cart> productsPage = query.get();
-		List<Cart> allCarts = productsPage.getContent();
-
-		if(allCarts.isEmpty()) throw new ApiException("No carts found");
-
-		List<CartDTO> cartDTOs = allCarts.stream()
-				.map(dtoUtils::convertToDTO)
-				.toList();
-
-		return new CartResponse(
-				cartDTOs,
-				productsPage.getNumber(),
-				productsPage.getSize(),
-				productsPage.getTotalElements(),
-				productsPage.getTotalPages(),
-				productsPage.isLast()
-		);
 	}
 
 	public CartDTO addProduct(Long productId, Integer quantity) {
@@ -104,7 +87,7 @@ public class CartService {
 		List<CartItem> cartItems = userCart.getCartItems();
 
 		List<ProductDTO> productDTOList = cartItems.stream()
-				.map(ci -> 	modelMapper.map(ci.getProduct(), ProductDTO.class))
+				.map(ci -> modelMapper.map(ci.getProduct(), ProductDTO.class))
 				.toList();
 
 		cartDTO.setProducts(productDTOList);
@@ -185,7 +168,32 @@ public class CartService {
 		return cartRepository.save(cart);
 	}
 
-	// TODO:
-	// CartDTO getForUser(String email, Long cartId)
+
+	private CartDTO getForUser(String email, Long cartId) {
+		Cart cart = cartRepository.findByUserEmailAndCartId(email, cartId)
+				.orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
+		return dtoUtils.convertToDTO(cart);
+	}
+
+
+	private CartResponse getPaginatedAndSortedProductResponse(Supplier<Page<Cart>> query) {
+		Page<Cart> productsPage = query.get();
+		List<Cart> allCarts = productsPage.getContent();
+
+		if(allCarts.isEmpty()) throw new ApiException("No carts found");
+
+		List<CartDTO> cartDTOs = allCarts.stream()
+				.map(dtoUtils::convertToDTO)
+				.toList();
+
+		return new CartResponse(
+				cartDTOs,
+				productsPage.getNumber(),
+				productsPage.getSize(),
+				productsPage.getTotalElements(),
+				productsPage.getTotalPages(),
+				productsPage.isLast()
+		);
+	}
 
 }

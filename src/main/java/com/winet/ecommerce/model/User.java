@@ -3,6 +3,7 @@ package com.winet.ecommerce.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +35,9 @@ public class User {
 	@Size(max = 50)
 	private String email;
 
-	private RoleName role = RoleName.ROLE_USER;
+	@NotBlank
+	@NotNull
+	private String role;
 
 	@NotBlank
 	private String password;
@@ -52,4 +55,5 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
+
 }
