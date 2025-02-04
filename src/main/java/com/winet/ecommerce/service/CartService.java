@@ -116,8 +116,8 @@ public class CartService {
 		cartItem.setProductPrice(product.getSpecialPrice());
 
 		userCart.setTotalPrice(
-						cartItem.getProductPrice()
-								.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
+				cartItem.getProductPrice()
+						.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
 		);
 
 		CartItem updatedCartItem = cartItemRepository.save(cartItem);
