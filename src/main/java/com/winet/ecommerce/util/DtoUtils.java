@@ -6,7 +6,8 @@ import com.winet.ecommerce.payload.dto.ProductDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class DtoUtils {
@@ -20,12 +21,15 @@ public class DtoUtils {
 	public CartDTO convertToDTO(Cart cart) {
 		CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
-		List<ProductDTO> productsDTOs = cart.getCartItems().stream()
-				.map(ci -> {
-					return modelMapper.map(ci.getProduct(), ProductDTO.class);
-				})
-				.toList();
-		cartDTO.setProducts(productsDTOs);
+		Map<String, Object> productsDTOMap = new HashMap<>();
+
+		cart.getCartItems().forEach(ci -> {
+			ProductDTO productDTO = modelMapper.map(ci.getProduct(), ProductDTO.class);
+			productsDTOMap.put("product", productDTO);
+			productsDTOMap.put("quantity", ci.getQuantity());
+		});
+
+		cartDTO.setProducts(productsDTOMap);
 
 		return cartDTO;
 	}

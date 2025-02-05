@@ -134,7 +134,6 @@ public class ProductService {
 		try {
 			filename = fileService.uploadImage(image);
 		} catch(IOException e) {
-			e.printStackTrace();
 			throw new ApiException("Error while uploading image");
 		}
 

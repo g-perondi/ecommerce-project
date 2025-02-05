@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +15,6 @@ public class CartDTO {
 
 	private Long cartId;
 	private BigDecimal totalPrice = BigDecimal.ZERO;
-	private List<ProductDTO> products = new ArrayList<>();
+	private Map<String, Object> products = new HashMap<>();
 
 }
