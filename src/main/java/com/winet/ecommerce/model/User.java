@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,6 +51,9 @@ public class User {
 			orphanRemoval = true
 	)
 	private Cart cart;
+
+	@OneToMany(mappedBy = "user")
+	private List<Order> orders;
 
 	public User(String username, String email, String password) {
 		this.username = username;

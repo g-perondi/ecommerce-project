@@ -44,7 +44,9 @@ public class CartService {
 
 	public CartResponse getAll(Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
-		return getPaginatedAndSortedProductResponse(() -> cartRepository.findAll(pageDetails));
+		return getPaginatedAndSortedProductResponse(
+				() -> cartRepository.findAll(pageDetails)
+		);
 	}
 
 	public CartDTO addProduct(Long productId, Integer quantity) {
