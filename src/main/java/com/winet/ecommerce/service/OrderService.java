@@ -24,14 +24,16 @@ public class OrderService {
 	private final CartRepository cartRepository;
 	private final ModelMapper modelMapper;
 	private final PaymentRepository paymentRepository;
+	private final CartItemRepository cartItemRepository;
 
 	@Autowired
-	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper, PaymentRepository paymentRepository) {
+	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, ModelMapper modelMapper, PaymentRepository paymentRepository, CartItemRepository cartItemRepository) {
 		this.authUtils = authUtils;
 		this.orderRepository = orderRepository;
 		this.cartRepository = cartRepository;
 		this.modelMapper = modelMapper;
 		this.paymentRepository = paymentRepository;
+		this.cartItemRepository = cartItemRepository;
 	}
 
 	@Transactional
@@ -82,8 +84,8 @@ public class OrderService {
 		order.setOrderItems(orderItems);
 		orderRepository.save(order);
 
-		cart.getCartItems().clear();
-		cartRepository.save(cart);
+		cartItemRepository.empty(cart.getCartId());
+		cartRepository.deleteForUser(user.getUserId());
 
 		OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
 		orderDTO.setPayment(modelMapper.map(payment, PaymentDTO.class));
