@@ -5,6 +5,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -27,6 +28,7 @@ public class CartItem {
 	@PositiveOrZero
 	private Double discount;
 
+	@ToString.Exclude
 	@ManyToOne
 	@JoinColumn(name = "cart_id")
 	private Cart cart;

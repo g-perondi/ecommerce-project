@@ -2,12 +2,10 @@ package com.winet.ecommerce.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Payment {
@@ -32,5 +30,12 @@ public class Payment {
 	private String pgStatus;
 	private String pgResponseMessage;
 
+	public Payment(String paymentMethod, String paymentGatewayName, String pgPaymentId, String pgStatus, String pgResponseMessage) {
+		this.paymentMethod = paymentMethod;
+		this.paymentGatewayName = paymentGatewayName;
+		this.pgPaymentId = pgPaymentId;
+		this.pgStatus = pgStatus;
+		this.pgResponseMessage = pgResponseMessage;
+	}
 
 }
