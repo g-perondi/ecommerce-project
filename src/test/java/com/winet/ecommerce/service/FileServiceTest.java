@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class FileServiceTest {
+class FileServiceTest {
 
 	@TempDir
 	Path tempDir;
@@ -65,7 +65,7 @@ public class FileServiceTest {
 		InputStreamResource csvResource = fileService.generateProductsCsv(products);
 
 		assertThat(csvResource).isNotNull();
-		assertThat(csvResource.getInputStream().available()).isGreaterThan(0);
+		assertThat(csvResource.getInputStream().available()).isPositive();
 	}
 
 	@Test
