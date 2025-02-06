@@ -1,13 +1,13 @@
 package com.winet.ecommerce.util;
 
 import com.winet.ecommerce.model.Cart;
-import com.winet.ecommerce.payload.dto.CartDTO;
-import com.winet.ecommerce.payload.dto.ProductDTO;
+import com.winet.ecommerce.model.Order;
+import com.winet.ecommerce.payload.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class DtoUtils {
@@ -18,20 +18,45 @@ public class DtoUtils {
 		this.modelMapper = modelMapper;
 	}
 
-	public CartDTO convertToDTO(Cart cart) {
-		CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+	public CartDTO convertCartToDTO(Cart cart) {
+		CartDTO cartDTO = new CartDTO();
 
-		Map<String, Object> productsDTOMap = new HashMap<>();
+		List<CartItemDTO> cartItemsDTO = cart.getCartItems().stream()
+				.map(ci -> {
+					CartItemDTO ciDTO = new CartItemDTO();
+					ciDTO.setCartItemId(ci.getCartItemId());
+					ciDTO.setProduct(modelMapper.map(ci.getProduct(), ProductDTO.class));
+					ciDTO.setQuantity(ci.getQuantity());
+					ciDTO.setProductPrice(ci.getProductPrice());
+					ciDTO.setDiscount(ci.getDiscount());
+					return ciDTO;
+				})
+				.toList();
 
-		cart.getCartItems().forEach(ci -> {
-			ProductDTO productDTO = modelMapper.map(ci.getProduct(), ProductDTO.class);
-			productsDTOMap.put("product", productDTO);
-			productsDTOMap.put("quantity", ci.getQuantity());
-		});
-
-		cartDTO.setProducts(productsDTOMap);
+		cartDTO.setCartId(cart.getCartId());
+		cartDTO.setTotalPrice(cart.getTotalPrice());
+		cartDTO.setCartItems(cartItemsDTO);
 
 		return cartDTO;
+	}
+
+	public OrderDTO convertOrderToDTO(Order order) {
+
+		OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
+		orderDTO.setPayment(modelMapper.map(order.getPayment(), PaymentDTO.class));
+
+		List<OrderItemDTO> orderItemsDTO = new ArrayList<>();
+
+		order.getOrderItems().forEach(item -> {
+			OrderItemDTO orderItemDTO = modelMapper.map(item, OrderItemDTO.class);
+			orderItemDTO.setProduct(modelMapper.map(item.getProduct(), ProductDTO.class));
+			orderItemDTO.setQuantity(item.getQuantity());
+			orderItemsDTO.add(orderItemDTO);
+		});
+
+		orderDTO.setOrderItems(orderItemsDTO);
+
+		return orderDTO;
 	}
 
 }

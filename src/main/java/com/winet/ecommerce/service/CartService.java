@@ -68,16 +68,17 @@ public class CartService {
 		cartItem.setCart(userCart);
 		cartItem.setQuantity(quantity);
 		cartItem.setDiscount(product.getDiscount());
-		cartItem.setProductPrice(product.getSpecialPrice());
+		cartItem.setProductPrice(product.getSpecialPrice().equals(BigDecimal.ZERO) ? product.getPrice() : product.getSpecialPrice());
 		cartItemRepository.save(cartItem);
 
+		userCart.getCartItems().add(cartItem);
 		userCart.setTotalPrice(userCart.getTotalPrice().add(
 				cartItem.getProductPrice()
 						.multiply(BigDecimal.valueOf(quantity)))
 		);
 		userCart = cartRepository.save(userCart);
 
-		return dtoUtils.convertToDTO(userCart);
+		return dtoUtils.convertCartToDTO(userCart);
 	}
 
 	@Transactional
@@ -105,26 +106,18 @@ public class CartService {
 				.orElseThrow(() -> new ApiException(product.getProductName() + " is not in the cart"));
 
 		cartItem.setQuantity(cartItem.getQuantity() + valueToChange);
-		cartItem.setDiscount(product.getDiscount());
-		cartItem.setProductPrice(product.getSpecialPrice());
+		userCart.setTotalPrice(calculateTotalPrice(userCart));
 
-		userCart.setTotalPrice(
-				cartItem.getProductPrice()
-						.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
-		);
+		Cart savedCart = cartRepository.save(userCart);
 
 		CartItem updatedCartItem = cartItemRepository.save(cartItem);
 
-		if(updatedCartItem.getQuantity() <= 0) {
-			cartItemRepository.delete(updatedCartItem);
-			userCart.getCartItems().remove(updatedCartItem);
-
-			if(userCart.getCartItems().isEmpty()) {
-				cartItemRepository.delete(productId, userCart.getCartId());
-			}
+		if(updatedCartItem.getQuantity() == 0) {
+			cartItemRepository.delete(productId, userCart.getCartId());
+			userCart.getCartItems().remove(cartItem);
 		}
 
-		return dtoUtils.convertToDTO(userCart);
+		return dtoUtils.convertCartToDTO(userCart);
 	}
 
 	@Transactional
@@ -145,7 +138,7 @@ public class CartService {
 		));
 		userCart.getCartItems().remove(cartItem);
 
-		return dtoUtils.convertToDTO(userCart);
+		return dtoUtils.convertCartToDTO(userCart);
 	}
 
 	public CartDTO getForUser() {
@@ -153,7 +146,7 @@ public class CartService {
 
 		Cart cart = cartRepository.findByEmail(email)
 				.orElseThrow(() -> new ResourceNotFoundException("Cart", "email", email));
-		return dtoUtils.convertToDTO(cart);
+		return dtoUtils.convertCartToDTO(cart);
 	}
 
 	private Cart createCart() {
@@ -174,6 +167,14 @@ public class CartService {
 		return cartRepository.save(cart);
 	}
 
+	private BigDecimal calculateTotalPrice(Cart cartItems) {
+		BigDecimal totalPrice = BigDecimal.ZERO;
+		for(CartItem cartItem : cartItems.getCartItems()) {
+			totalPrice = totalPrice.add(cartItem.getProductPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+		}
+		return totalPrice;
+	}
+
 	private CartResponse getPaginatedAndSortedProductResponse(Supplier<Page<Cart>> query) {
 		Page<Cart> productsPage = query.get();
 		List<Cart> allCarts = productsPage.getContent();
@@ -181,7 +182,7 @@ public class CartService {
 		if(allCarts.isEmpty()) throw new ApiException("No carts found");
 
 		List<CartDTO> cartDTOs = allCarts.stream()
-				.map(dtoUtils::convertToDTO)
+				.map(dtoUtils::convertCartToDTO)
 				.toList();
 
 		return new CartResponse(

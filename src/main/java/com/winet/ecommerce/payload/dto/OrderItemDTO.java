@@ -12,9 +12,8 @@ import java.math.BigDecimal;
 public class OrderItemDTO {
 
 	private Long orderItemId;
-	private ProductDTO productDTO;
 	private Integer quantity;
-	private Double discount;
 	private BigDecimal totalPrice;
+	private ProductDTO product;
 
 }

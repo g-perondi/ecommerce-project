@@ -1,5 +1,6 @@
 package com.winet.ecommerce.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -41,6 +42,8 @@ public class User {
 	@NotNull
 	private String role;
 
+	@ToString.Exclude
+	@JsonIgnore
 	@NotBlank
 	private String password;
 
@@ -52,6 +55,7 @@ public class User {
 	)
 	private Cart cart;
 
+	@ToString.Exclude
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders;
 

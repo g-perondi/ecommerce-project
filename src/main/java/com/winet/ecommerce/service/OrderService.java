@@ -3,9 +3,14 @@ package com.winet.ecommerce.service;
 import com.winet.ecommerce.exception.custom.ApiException;
 import com.winet.ecommerce.exception.custom.ResourceNotFoundException;
 import com.winet.ecommerce.model.*;
-import com.winet.ecommerce.payload.dto.*;
-import com.winet.ecommerce.repository.*;
+import com.winet.ecommerce.payload.dto.OrderDTO;
+import com.winet.ecommerce.payload.dto.OrderRequest;
+import com.winet.ecommerce.repository.CartItemRepository;
+import com.winet.ecommerce.repository.CartRepository;
+import com.winet.ecommerce.repository.OrderRepository;
+import com.winet.ecommerce.repository.PaymentRepository;
 import com.winet.ecommerce.util.AuthUtils;
+import com.winet.ecommerce.util.DtoUtils;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +26,21 @@ public class OrderService {
 
 	private final AuthUtils authUtils;
 	private final OrderRepository orderRepository;
-	private final CartRepository cartRepository;
-	private final ModelMapper modelMapper;
 	private final PaymentRepository paymentRepository;
+	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
+	private final ModelMapper modelMapper;
+	private final DtoUtils dtoUtils;
 
 	@Autowired
-	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartRepository cartRepository, ModelMapper modelMapper, PaymentRepository paymentRepository, CartItemRepository cartItemRepository) {
+	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, PaymentRepository paymentRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper, DtoUtils dtoUtils) {
 		this.authUtils = authUtils;
 		this.orderRepository = orderRepository;
-		this.cartRepository = cartRepository;
-		this.modelMapper = modelMapper;
 		this.paymentRepository = paymentRepository;
+		this.cartRepository = cartRepository;
 		this.cartItemRepository = cartItemRepository;
+		this.modelMapper = modelMapper;
+		this.dtoUtils = dtoUtils;
 	}
 
 	@Transactional
@@ -66,10 +73,9 @@ public class OrderService {
 
 		order.setPayment(payment);
 
-		List<CartItem> cartItems = cart.getCartItems();
 		List<OrderItem> orderItems = new ArrayList<>();
 
-		cartItems.forEach(ci -> {
+		cart.getCartItems().forEach(ci -> {
 			OrderItem orderItem = new OrderItem();
 			orderItem.setProduct(ci.getProduct());
 			orderItem.setQuantity(ci.getQuantity());
@@ -87,17 +93,7 @@ public class OrderService {
 		cartItemRepository.empty(cart.getCartId());
 		cartRepository.deleteForUser(user.getUserId());
 
-		OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
-		orderDTO.setPayment(modelMapper.map(payment, PaymentDTO.class));
-
-		orderItems.forEach(item -> {
-			OrderItemDTO orderItemDTO = modelMapper.map(item, OrderItemDTO.class);
-			orderItemDTO.setProductDTO(modelMapper.map(item.getProduct(), ProductDTO.class));
-			orderItemDTO.setQuantity(item.getQuantity());
-			orderDTO.getOrderItems().add(orderItemDTO);
-		});
-
-		return orderDTO;
+		return dtoUtils.convertOrderToDTO(order);
 	}
 
 }
