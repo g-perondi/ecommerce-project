@@ -108,7 +108,7 @@ public class CartService {
 		cartItem.setQuantity(cartItem.getQuantity() + valueToChange);
 		userCart.setTotalPrice(calculateTotalPrice(userCart));
 
-		Cart savedCart = cartRepository.save(userCart);
+		cartRepository.save(userCart);
 
 		CartItem updatedCartItem = cartItemRepository.save(cartItem);
 

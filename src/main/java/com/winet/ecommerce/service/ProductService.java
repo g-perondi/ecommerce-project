@@ -8,6 +8,8 @@ import com.winet.ecommerce.payload.response.ProductResponse;
 import com.winet.ecommerce.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ import static com.winet.ecommerce.util.PagingAndSortingUtils.getPageDetails;
 
 @Service
 public class ProductService {
+
+	private final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
 	private final ProductRepository productRepository;
 	private final FileService fileService;
@@ -93,7 +97,7 @@ public class ProductService {
 			try {
 				fileService.deleteImage(product.getImage());
 			} catch(IOException e) {
-				System.out.println("Image not deleted");
+				LOGGER.error("Image could not be deleted");
 			}
 		}
 
@@ -158,12 +162,13 @@ public class ProductService {
 				.map(productDTO -> modelMapper.map(productDTO, Product.class))
 				.toList();
 
-		for (Product product : productsList) {
-			if (productRepository.existsByProductName(product.getProductName())) {
-				System.err.println(product.getProductName() + " already exists");
+		for(Product product : productsList) {
+			if(productRepository.existsByProductName(product.getProductName())) {
+				LOGGER.error("Product with name {} this name already exists", product.getProductName());
 			} else {
 				product.setProductId(null);
-				productRepository.save(product);
+				Product imported = productRepository.save(product);
+				LOGGER.info("Imported product: {}", imported.getProductName());
 			}
 		}
 	}

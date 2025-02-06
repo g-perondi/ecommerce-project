@@ -3,7 +3,6 @@ package com.winet.ecommerce.service;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.winet.ecommerce.model.Product;
 import com.winet.ecommerce.payload.dto.ProductDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,7 @@ import java.util.UUID;
 @Getter
 public class FileService {
 
-	@Value("${project.images.path}")
+	@Value("${spring.app.images.path}")
 	private String imagesPath;
 
 	public String uploadImage(MultipartFile image) throws IOException {
@@ -56,7 +55,7 @@ public class FileService {
 		File file = new File(filepath);
 
 		if(file.exists()) {
-			file.delete();
+			Files.delete(file.toPath());
 			return;
 		}
 

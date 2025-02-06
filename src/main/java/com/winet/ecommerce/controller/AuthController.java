@@ -44,14 +44,14 @@ public class AuthController {
 	}
 
 	@PostMapping("/sign-in")
-	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<ApiResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication;
 		try {
 			authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		} catch(AuthenticationException exception) {
-			return new ResponseEntity<ApiResponse>(new ApiResponse("Bad credentials", false), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new ApiResponse("Bad credentials", false), HttpStatus.NOT_FOUND);
 		}
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -70,7 +70,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/sign-up")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+	public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
 		if(userRepository.existsByUsername(signupRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new ApiResponse("Username already exists", false));
 		}

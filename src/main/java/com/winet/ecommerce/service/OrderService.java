@@ -12,7 +12,6 @@ import com.winet.ecommerce.repository.PaymentRepository;
 import com.winet.ecommerce.util.AuthUtils;
 import com.winet.ecommerce.util.DtoUtils;
 import jakarta.transaction.Transactional;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,17 +28,15 @@ public class OrderService {
 	private final PaymentRepository paymentRepository;
 	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
-	private final ModelMapper modelMapper;
 	private final DtoUtils dtoUtils;
 
 	@Autowired
-	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, PaymentRepository paymentRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, ModelMapper modelMapper, DtoUtils dtoUtils) {
+	public OrderService(AuthUtils authUtils, OrderRepository orderRepository, PaymentRepository paymentRepository, CartRepository cartRepository, CartItemRepository cartItemRepository, DtoUtils dtoUtils) {
 		this.authUtils = authUtils;
 		this.orderRepository = orderRepository;
 		this.paymentRepository = paymentRepository;
 		this.cartRepository = cartRepository;
 		this.cartItemRepository = cartItemRepository;
-		this.modelMapper = modelMapper;
 		this.dtoUtils = dtoUtils;
 	}
 
