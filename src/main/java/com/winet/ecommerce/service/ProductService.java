@@ -151,14 +151,21 @@ public class ProductService {
 		try {
 			fromCsv = this.fileService.readProductsCsv(file);
 		} catch(IOException e) {
-			throw new ApiException("Error while importing products from CSV");
+			throw new ApiException("Error while reading products from CSV");
 		}
 
 		List<Product> productsList = fromCsv.stream()
 				.map(productDTO -> modelMapper.map(productDTO, Product.class))
 				.toList();
 
-		this.productRepository.saveAll(productsList);
+		for (Product product : productsList) {
+			if (productRepository.existsByProductName(product.getProductName())) {
+				System.err.println(product.getProductName() + " already exists");
+			} else {
+				product.setProductId(null);
+				productRepository.save(product);
+			}
+		}
 	}
 
 	@Transactional

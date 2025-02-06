@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static com.winet.ecommerce.util.PagingAndSortingUtils.*;
@@ -102,7 +103,7 @@ public class ProductController {
 	}
 
 	@GetMapping(value = "/admin/products/export-csv", produces = "text/csv")
-	public ResponseEntity<InputStreamResource> getCsv() {
+	public ResponseEntity<InputStreamResource> getCsv() throws IOException {
 		InputStreamResource csv = this.productService.exportCsv();
 
 		String csvFileName = "products.csv";
@@ -117,10 +118,10 @@ public class ProductController {
 		);
 	}
 
-	@PostMapping(value = "/admin/products/import-csv", consumes = "text/csv")
+	@PostMapping(value = "/admin/products/import-csv")
 	public ResponseEntity<ApiResponse> importCsv(@RequestPart("products") MultipartFile products) {
 		this.productService.importCsv(products);
-		return new ResponseEntity<>(new ApiResponse("Product import successful.", true), HttpStatus.CREATED);
+		return new ResponseEntity<>(new ApiResponse("Product import completed.", true), HttpStatus.CREATED);
 	}
 
 }

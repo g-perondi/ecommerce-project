@@ -65,7 +65,7 @@ public class FileService {
 
 	public InputStreamResource generateProductsCsv(List<ProductDTO> products) throws IOException {
 		CsvMapper mapper = new CsvMapper();
-		CsvSchema schema = mapper.schemaFor(Product.class)
+		CsvSchema schema = mapper.schemaFor(ProductDTO.class)
 				.withHeader()
 				.withColumnReordering(true);
 
