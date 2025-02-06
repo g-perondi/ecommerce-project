@@ -46,10 +46,7 @@ public class CartController {
 	}
 
 	@PutMapping("carts/products/{productId}/{operation}")
-	public ResponseEntity<CartDTO> updateProductQuantity(
-			@PathVariable Long productId,
-			@PathVariable String operation
-	) {
+	public ResponseEntity<CartDTO> updateProductQuantity(@PathVariable Long productId, @PathVariable String operation) {
 		CartDTO cartDTO = cartService.updateProductQuantity(productId, operation);
 		return new ResponseEntity<>(cartDTO, HttpStatus.OK);
 	}

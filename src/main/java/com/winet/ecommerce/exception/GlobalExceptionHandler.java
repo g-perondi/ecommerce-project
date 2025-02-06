@@ -19,12 +19,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-//	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//	@ExceptionHandler(value = Exception.class)
-//	public ResponseEntity<ApiResponse> handleAllException(Exception exception) {
-//		ApiResponse apiResponse = new ApiResponse("Something went wrong...", false);
-//		return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-//	}
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(value = Exception.class)
+	public ResponseEntity<ApiResponse> handleAllException(Exception exception) {
+		ApiResponse apiResponse = new ApiResponse("Something went wrong...", false);
+		return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(value = { ApiException.class })
