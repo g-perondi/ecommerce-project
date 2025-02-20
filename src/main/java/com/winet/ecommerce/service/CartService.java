@@ -83,45 +83,6 @@ public class CartService {
 		return dtoUtils.convertCartToDTO(userCart);
 	}
 
-	@Transactional
-	public CartDTO updateProductQuantity(Long productId, String operation) {
-
-		String email = authUtils.loggedInEmail();
-
-		Cart userCart = cartRepository.findByEmail(email)
-				.orElseThrow(() -> new ResourceNotFoundException("Cart", "email", email));
-
-		int valueToChange;
-
-		if(operation.equals("add")) {
-			valueToChange = 1;
-		} else if(operation.equals("remove")) {
-			valueToChange = -1;
-		} else {
-			throw new ApiException("Invalid operation");
-		}
-
-		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-		CartItem cartItem = cartItemRepository.findByProductIdAndCartId(productId, userCart.getCartId())
-				.orElseThrow(() -> new ApiException(product.getProductName() + " is not in the cart"));
-
-		cartItem.setQuantity(cartItem.getQuantity() + valueToChange);
-		userCart.setTotalPrice(calculateTotalPrice(userCart));
-
-		cartRepository.save(userCart);
-
-		CartItem updatedCartItem = cartItemRepository.save(cartItem);
-
-		if(updatedCartItem.getQuantity() == 0) {
-			cartItemRepository.delete(productId, userCart.getCartId());
-			userCart.getCartItems().remove(cartItem);
-		}
-
-		return dtoUtils.convertCartToDTO(userCart);
-	}
-
 	public CartDTO update(CartDTO cartDTO) {
 
 		String email = authUtils.loggedInEmail();
