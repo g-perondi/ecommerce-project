@@ -106,17 +106,10 @@ public class ProductService {
 		return modelMapper.map(product, ProductDTO.class);
 	}
 
-	public ProductResponse search(String keyword, Integer page, Integer size, String sort, String order) {
+	public ProductResponse search(String keyword, Double minPrice, Double maxPrice, Integer page, Integer size, String sort, String order) {
 		Pageable pageDetails = getPageDetails(page, size, sort, order);
 		return getPaginatedAndSortedProductResponse(
-				() -> productRepository.findByProductNameContainsIgnoreCase(keyword, pageDetails)
-		);
-	}
-
-	public ProductResponse search(Double minPrice, Double maxPrice, Integer page, Integer size, String sort, String order) {
-		Pageable pageDetails = getPageDetails(page, size, sort, order);
-		return getPaginatedAndSortedProductResponse(
-				() -> productRepository.findByPriceBetween(BigDecimal.valueOf(minPrice), BigDecimal.valueOf(maxPrice), pageDetails)
+				() -> productRepository.findByProductNameContainsIgnoreCaseAndSpecialPriceBetween(keyword, BigDecimal.valueOf(minPrice), BigDecimal.valueOf(maxPrice), pageDetails)
 		);
 	}
 
@@ -203,13 +196,10 @@ public class ProductService {
 	 *
 	 * @param query a {@link Supplier} that provides a {@link Page}<{@link Product}> when invoked.
 	 * @return a {@link ProductResponse} containing the paginated product data.
-	 * @throws ApiException if no products are found in the retrieved page.
 	 */
 	private ProductResponse getPaginatedAndSortedProductResponse(Supplier<Page<Product>> query) {
 		Page<Product> productsPage = query.get();
 		List<Product> allProducts = productsPage.getContent();
-
-		if(allProducts.isEmpty()) throw new ApiException("No products found");
 
 		List<ProductDTO> productDTOs = allProducts.stream()
 				.map(product -> modelMapper.map(product, ProductDTO.class))

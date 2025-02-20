@@ -18,19 +18,19 @@ public class CurrencyService {
 		this.restTemplate = restTemplate;
 	}
 
-	public double fetchExchangeRate(String from, String to) {
+	public BigDecimal fetchExchangeRate(String from, String to) {
 		String url = String.format("https://hexarate.paikama.co/api/rates/latest/%s?target=%s", from, to);
 		ExchangeResponse response = restTemplate.getForObject(url, ExchangeResponse.class);
 
 		if(response != null && response.getData() != null) {
-			return response.getData().getMid();
+			return BigDecimal.valueOf(response.getData().getMid());
 		}
 		throw new ApiException("Error while fetching exchange rate");
 	}
 
-	public double fetchExchangeRate(BigDecimal value, String from, String to) {
-		BigDecimal rate = BigDecimal.valueOf(fetchExchangeRate(from, to));
-		return rate.multiply(value).doubleValue();
+	public BigDecimal convert(BigDecimal value, String from, String to) {
+		BigDecimal rate = fetchExchangeRate(from, to);
+		return rate.multiply(value);
 	}
 
 }

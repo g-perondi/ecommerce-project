@@ -1,4 +1,4 @@
-package com.winet.ecommerce.payload.dto;
+package com.winet.ecommerce.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

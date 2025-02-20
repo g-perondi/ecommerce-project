@@ -37,18 +37,19 @@ public class WebSecurityConfig {
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.authorizeHttpRequests(requests ->
 				requests
-						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/v3/api-docs/**").permitAll()
-						.requestMatchers("/api/v1/public/**").permitAll()
-						.requestMatchers("/swagger-ui/**").permitAll()
-						.requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
-						.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-						.anyRequest().authenticated()
+//						.requestMatchers("/api/auth/**").permitAll()
+//						.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+//						.requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
+//						.requestMatchers("/api/v1/public/**").permitAll()
+//						.requestMatchers("/swagger-ui/**").permitAll()
+//						.requestMatchers("/v3/api-docs/**").permitAll()
+//						.anyRequest().authenticated()
+						.anyRequest().permitAll()
 		);
 
-		http.authenticationProvider(authenticationProvider());
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-		http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
+//		http.authenticationProvider(authenticationProvider());
+//		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//		http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
 
 		return http.build();
 	}

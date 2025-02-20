@@ -20,6 +20,7 @@ import static com.winet.ecommerce.util.PagingAndSortingUtils.*;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "*")
 public class ProductController {
 
 	private final ProductService productService;
@@ -48,18 +49,7 @@ public class ProductController {
 
 	@GetMapping(value = "/public/products/search")
 	public ResponseEntity<ProductResponse> search(
-			@RequestParam(name = "keyword") String keyword,
-			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
-			@RequestParam(name = "size", defaultValue = PAGE_SIZE, required = false) int size,
-			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
-			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
-	) {
-		ProductResponse allProductsByKeyword = productService.search(keyword, page, size, sort, order);
-		return new ResponseEntity<>(allProductsByKeyword, HttpStatus.OK);
-	}
-
-	@GetMapping("/public/products/price")
-	public ResponseEntity<ProductResponse> search(
+			@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
 			@RequestParam(name = "min", defaultValue = PRODUCT_DEFAULT_MIN_PRICE, required = false) double minPrice,
 			@RequestParam(name = "max", defaultValue = PRODUCT_DEFAULT_MAX_PRICE, required = false) double maxPrice,
 			@RequestParam(name = "page", defaultValue = PAGE_NUMBER, required = false) int page,
@@ -67,8 +57,8 @@ public class ProductController {
 			@RequestParam(name = "sort", defaultValue = PRODUCT_DEFAULT_SORT_BY, required = false) String sort,
 			@RequestParam(name = "order", defaultValue = DEFAULT_ORDER_BY, required = false) String order
 	) {
-		ProductResponse allProductsByPrice = productService.search(minPrice, maxPrice, page, size, sort, order);
-		return new ResponseEntity<>(allProductsByPrice, HttpStatus.OK);
+		ProductResponse allProductsByKeyword = productService.search(keyword, minPrice, maxPrice, page, size, sort, order);
+		return new ResponseEntity<>(allProductsByKeyword, HttpStatus.OK);
 	}
 
 	@PostMapping("/admin/products")

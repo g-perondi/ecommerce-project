@@ -13,8 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	boolean existsByProductName(String productName);
 
-	Page<Product> findByProductNameContainsIgnoreCase(String keyword, Pageable pageable);
-
-	Page<Product> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+	Page<Product> findByProductNameContainsIgnoreCaseAndSpecialPriceBetween(String keyword, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
 }

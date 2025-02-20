@@ -7,15 +7,14 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ResourceNotFoundException extends RuntimeException {
 
 	@Serial
 	private static final long serialVersionUID = 1L;
 
-	private String resourceName;
-	private String field;
+	private final String resourceName;
+	private final String field;
 	private String fieldName;
 	private Long fieldId;
 

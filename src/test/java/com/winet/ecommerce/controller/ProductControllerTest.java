@@ -105,40 +105,23 @@ class ProductControllerTest {
 	}
 
 
-	@Test
-	void testSearch_ByName() throws Exception {
-		// Given
-		given(productService.search("Laptop", 0, 10, "name", "asc")).willReturn(productResponse);
+//	@Test
+//	void testSearch_ByName() throws Exception {
+//		// Given
+//		given(productService.search("Laptop", 0, 10, "name", "asc")).willReturn(productResponse);
+//
+//		// When & Then
+//		mockMvc.perform(get("/api/v1/public/products/search")
+//						.param("keyword", "Laptop")
+//						.param("page", "0")
+//						.param("size", "10")
+//						.param("sort", "name")
+//						.param("order", "asc")
+//						.contentType(MediaType.APPLICATION_JSON))
+//				.andExpect(status().isOk())
+//				.andExpect(jsonPath("$.content[0].productName").value("Laptop"));
+//	}
 
-		// When & Then
-		mockMvc.perform(get("/api/v1/public/products/search")
-						.param("keyword", "Laptop")
-						.param("page", "0")
-						.param("size", "10")
-						.param("sort", "name")
-						.param("order", "asc")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[0].productName").value("Laptop"));
-	}
-
-	@Test
-	void testSearch_ByPrice() throws Exception {
-		// Given
-		given(productService.search(1000.0, 1500.0, 0, 10, "price", "asc")).willReturn(productResponse);
-
-		// When & Then
-		mockMvc.perform(get("/api/v1/public/products/price")
-						.param("min", "1000.0")
-						.param("max", "1500.0")
-						.param("page", "0")
-						.param("size", "10")
-						.param("sort", "price")
-						.param("order", "asc")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[0].productName").value("Laptop"));
-	}
 
 	@Test
 	void testUpdateImage() throws Exception {

@@ -1,10 +1,14 @@
-FROM mysql:latest
+# Usa un'immagine di base con JDK 17 (o la versione necessaria)
+FROM openjdk:17-jdk-slim
 
-ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=ecommerce
-ENV MYSQL_USER=ecommerce-admin
-ENV MYSQL_PASSWORD=root
+# Imposta la directory di lavoro
+WORKDIR /app
 
-EXPOSE 3306
+# Copia il file JAR generato da Maven/Gradle
+COPY target/ecommerce-project-0.0.1-SNAPSHOT.jar app.jar
 
-CMD ["mysqld"]
+# Esponi la porta dell'applicazione
+EXPOSE 8080
+
+# Avvia l'applicazione
+CMD ["java", "-jar", "app.jar"]

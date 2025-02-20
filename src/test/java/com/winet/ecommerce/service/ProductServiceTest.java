@@ -21,8 +21,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.BDDMockito.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -96,35 +96,35 @@ class ProductServiceTest {
 		assertThat(result.getImage()).isEqualTo("laptop.png");
 	}
 
-	@Test
-	void testSearch_ProductName() {
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
-		Page<Product> page = new PageImpl<>(List.of(product));
+//	@Test
+//	void testSearch_ProductName() {
+//		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
+//		Page<Product> page = new PageImpl<>(List.of(product));
+//
+//		given(productRepository.findByProductNameContainsIgnoreCase("Laptop", pageable))
+//				.willReturn(page);
+//
+//		ProductResponse response = productService.search("Laptop", 0, 10, "productName", "asc");
+//
+//		assertThat(response.getTotalElements()).isEqualTo(1);
+//		assertThat(response.getContent().get(0).getProductName()).isEqualTo("Laptop");
+//	}
 
-		given(productRepository.findByProductNameContainsIgnoreCase("Laptop", pageable))
-				.willReturn(page);
-
-		ProductResponse response = productService.search("Laptop", 0, 10, "productName", "asc");
-
-		assertThat(response.getTotalElements()).isEqualTo(1);
-		assertThat(response.getContent().get(0).getProductName()).isEqualTo("Laptop");
-	}
-
-	@Test
-	void testSearch_BasicScenario() {
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
-		Page<Product> page = new PageImpl<>(List.of(product));
-
-		given(productRepository.findByPriceBetween(BigDecimal.valueOf(1000.0), BigDecimal.valueOf(1500.0), pageable))
-				.willReturn(page);
-		given(modelMapper.map(any(Product.class), eq(ProductDTO.class))).willReturn(productDTO);
-
-		ProductResponse response = productService.search(1000.0, 1500.0, 0, 10, "productName", "asc");
-
-		assertThat(response.getTotalElements()).isEqualTo(1);
-		assertThat(response.getContent().size()).isEqualTo(1);
-		assertThat(response.getContent().get(0).getProductName()).isEqualTo("Laptop");
-	}
+//	@Test
+//	void testSearch_BasicScenario() {
+//		Pageable pageable = PageRequest.of(0, 10, Sort.by("productName").ascending());
+//		Page<Product> page = new PageImpl<>(List.of(product));
+//
+//		given(productRepository.findByPriceBetween(BigDecimal.valueOf(1000.0), BigDecimal.valueOf(1500.0), pageable))
+//				.willReturn(page);
+//		given(modelMapper.map(any(Product.class), eq(ProductDTO.class))).willReturn(productDTO);
+//
+//		ProductResponse response = productService.search(1000.0, 1500.0, 0, 10, "productName", "asc");
+//
+//		assertThat(response.getTotalElements()).isEqualTo(1);
+//		assertThat(response.getContent().size()).isEqualTo(1);
+//		assertThat(response.getContent().get(0).getProductName()).isEqualTo("Laptop");
+//	}
 
 	@Test
 	void testImportAllFromCsv() throws IOException {

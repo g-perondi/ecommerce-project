@@ -28,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
 	private final JwtUtils jwtUtils;
@@ -129,6 +130,5 @@ public class AuthController {
 
 		return ResponseEntity.ok(response);
 	}
-
 
 }
