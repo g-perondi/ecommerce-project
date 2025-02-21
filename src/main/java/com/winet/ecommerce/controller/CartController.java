@@ -40,6 +40,7 @@ public class CartController {
 	public ResponseEntity<CartDTO> addProduct(
 			@PathVariable Long productId,
 			@RequestParam(value = "quantity", defaultValue = "1", required = false) Integer quantity) {
+
 		CartDTO cartDTO = cartService.addProduct(productId, quantity);
 
 		return new ResponseEntity<>(cartDTO, HttpStatus.OK);

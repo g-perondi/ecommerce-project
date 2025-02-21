@@ -83,6 +83,7 @@ public class CartService {
 		return dtoUtils.convertCartToDTO(userCart);
 	}
 
+	@Transactional
 	public CartDTO update(CartDTO cartDTO) {
 
 		String email = authUtils.loggedInEmail();
